@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>推箱子</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #wrap {
+            position: relative;
+            background-image: url('./img/block.gif');
+        }
+
+        #wrap>div {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+        }
+
+        #wrap>div>img {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+        }
+
+        #wrap div.ball img{
+            left: 50%;
+            top: 50%;
+            margin-left: -15px;
+            margin-top: -15px;
+        }
+
+        #wrap div.person img{
+            left: 50%;
+            margin-left: -25px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrap">
+
+    </div>
+    <script src="./data.js"></script>
+    <script>
+        /*
+            思路： 
+            先创建地图，16*16，地图wrap的宽度和高度就等于个数*每个格子的大小。
+            设置wrap的背景图片，会平铺，这样每个格子都有背景了。
+            循环创建16*16个div塞进每个格子里，再塞图片进div里,
+            div的位置根据index计算可以推出x和y， 
+            循环关卡数组，根据对应的1234来填充对应的图片
+        
+        
+        */
+        const Game = {
+            exe() {
+                this.createMap(this.level)
+            },
+            mapData,
+            level: 0,
+            wrap: document.getElementById("wrap"),
+            createMap(lv) {
+                const size = { x: 16, y: 16 },
+                    count = size.x * size.y;
+                let person,
+                    div,
+                    img;
+                this.wrap.style.width = size.x * 35 + 'px';
+                this.wrap.style.height = size.y * 35 + 'px';
+
+                //创建16*16的格子
+                for (let i = 0; i < count; i++) {
+                    switch (this.mapData[lv][i]) {
+                        case 1:
+                            appDiv(i);
+                            img.src = './img/wall.png'; //树
+                            div.className = 'wall';
+                            break;
+                        case 2:
+                            appDiv(i);
+                            img.src = './img/ball.png'; //球
+                            div.className = 'ball';
+                            break;
+                        case 3:
+                            appDiv(i);
+                            img.src = './img/box.png'; //箱子
+                            div.className = 'box';
+                            break;
+                        case 4:
+                            appDiv(i);
+                            img.src = './img/down.png'; //人物
+                            div.className = 'person';
+                            person = img;
+                            break;
+                    }
+                }
+                function appDiv(i) {
+                    let x = i % size.x,
+                        y = parseInt(i / size.x);
+                    div = document.createElement("div");
+                    div.style.left = x * 35 + 'px';
+                    div.style.top = y * 35 + 'px';
+                    img = new Image();
+                    div.appendChild(img);
+                    this.wrap.appendChild(div);
+                }
+                this.controlPerson(person);
+            },
+            controlPerson(op) {
+                let This = this,
+                parent = op.parentNode;
+                console.log(parent)
+                document.onkeydown = function (ev) {
+                    ev = ev || window.event;
+                    const keyCode = ev.keyCode;
+                    switch (keyCode) {
+                        // ←
+                        case 37:
+                            op.src = './img/left.png';
+                            This.movePerson({x:-1})
+                            break;
+
+                        // ↑
+                        case 38:
+                            op.src = './img/up.png';
+                            This.movePerson({y:-1})
+                            break;
+
+                        // →
+                        case 39:
+                            op.src = './img/right.png';
+                            This.movePerson({x:1})
+                            break;
+
+                        // ↓
+                        case 40:
+                            op.src = './img/down.png';
+                            This.movePerson({y:1})
+                            break;
+                    }
+                    return false;
+                }
+            },
+            movePerson(json){
+                let x = json.x || 0,
+                    y = json.y || 0;
+            }
+        }
+
+        window.onload = function () {
+            Game.exe();
+        }
+
+    </script>
+
+</body>
+
+</html>
