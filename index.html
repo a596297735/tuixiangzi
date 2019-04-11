@@ -82,6 +82,7 @@
             size: { x: 16, y: 16 },
             wrap: document.getElementById("wrap"),
             createMap(lv) {
+                document.getElementById("wrap").innerHTML = '';
                 const count = this.size.x * this.size.y;
                 let person,
                     div,
@@ -183,22 +184,22 @@
                             //箱子移动的下一点不能是树和箱子
                             if (this.mapData[that.level][(item.x + x) + (item.y + y) * that.size.x] !== 1
                                 && this.mapData[that.level][(item.x + x) + (item.y + y) * that.size.x] !== 3) {
-                                that.pz(item, parent, '+', x, y);
-                                that.isVictory();
+                                that.boxAndParentMove(item, parent, '+', x, y);
                             } else { //人物不动
-                                that.pz(item, parent, '-', x, y);
+                                that.boxAndParentMove(item, parent, '-', x, y);
                             }
                         }
                     })
                 }
             },
-            pz(item, parent, direction, x, y) { // 箱子,人物,方向,箱子的x,箱子的y
+            boxAndParentMove(item, parent, direction, x, y) { // 箱子,人物,方向,箱子的x,箱子的y
                 if (direction === '+') {
                     item.x += x;
                     item.y += y;
                     item.style.left = item.x * 35 + 'px';
                     item.style.top = item.y * 35 + 'px';
                     item.style.zIndex = item.y * this.size.x;
+                    this.pass();
                 } else {
                     parent.x -= x;
                     parent.y -= y;
@@ -207,7 +208,7 @@
                     parent.style.zIndex = parent.y * this.size.x;
                 }
             },
-            isVictory(){
+            pass(){
                 let boxs = document.getElementsByClassName("box"),
                     balls = document.getElementsByClassName("ball"),
                     num = 0;
@@ -216,8 +217,12 @@
                     if(item.x === balls[index].x && item.y === balls[index].y){
                         num ++ ;                        
                     }
-                })
-                if(num === boxs.length) alert("1111")
+                })                
+                if(num === boxs.length){
+                    // console.log('victory');
+                    this.level++;
+                    this.exe();
+                }
             }
 
         }
